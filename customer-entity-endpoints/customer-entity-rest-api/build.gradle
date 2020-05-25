@@ -1,0 +1,33 @@
+plugins {
+    id 'jacoco'
+}
+
+dependencies {
+    api project(':customer-entity-core')
+
+    implementation "io.micrometer:micrometer-registry-prometheus:${micrometerPrometheusVersion}"
+    implementation "net.logstash.logback:logstash-logback-encoder:${logstashEncoderVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-all'
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+    implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+    implementation 'org.springframework.security:spring-security-config'
+
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatatypeVersion}"
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = true
+}
+
+bootBuildImage {
+    imageName = "jrmcdonald/${project.name}:${project.version}"
+}

@@ -1,0 +1,26 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+metadata:
+  name:
+build:
+  artifacts:
+    - image: jrmcdonald/ms-customer-entity
+      custom:
+        buildCommand: ./scripts/docker-build.sh
+        dependencies:
+          paths:
+            - .
+deploy:
+  helm:
+    releases:
+      - name: ms-customer-entity
+        namespace: dev
+        chartPath: qwyck/ms-customer-entity
+        imageStrategy:
+          helm:
+            explicitRegistry: false
+        remote: true
+        values:
+          image: jrmcdonald/ms-customer-entity
+        valuesFiles:
+          - charts/ms-customer-entity/values.yaml

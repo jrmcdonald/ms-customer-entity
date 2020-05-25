@@ -1,0 +1,76 @@
+plugins {
+    id 'com.github.ben-manes.versions' version "${versionsPluginVersion}"
+    id 'com.github.spotbugs' version "${spotbugsPluginVersion}"
+    id 'com.gtramontina.ghooks.gradle' version "${ghooksPluginVersion}"
+    id 'org.owasp.dependencycheck' version "${dependencyCheckPluginVersion}"
+    id 'org.sonarqube' version "${sonarqubePluginVersion}"
+    id 'org.springframework.boot' version "${springBootPluginVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementPluginVersion}"
+    id 'jacoco'
+    id 'java'
+    id 'java-library'
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'com.github.spotbugs'
+    apply plugin: 'org.owasp.dependencycheck'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.jrmcdonald'
+    version = "${version}"
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+        [apiElements, runtimeElements].each {
+            it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+            it.outgoing.artifact(bootJar)
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        implementation "com.github.spotbugs:spotbugs-annotations:${spotbugsVersion}"
+
+        testImplementation "org.force66:BeanTester:${beanTesterVersion}"
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    compileJava {
+        options.compilerArgs << "-Werror"
+        options.compilerArgs << "-Xlint:all"
+        options.compilerArgs << "-Xlint:-try"
+        options.compilerArgs << "-Xlint:-processing"
+    }
+
+    bootJar {
+        enabled = false
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+apply from: "${rootDir}/gradle/dependencies.gradle"
+apply from: "${rootDir}/gradle/quality.gradle"
