@@ -68,7 +68,7 @@ jobs:
       if: github.event_name != 'pull_request'
       run: |
         export BRANCH_NAME=$(git branch --show-current)
-        export BRANCH_NAME_OPT="-Dsonar.branch.name={BRANCH_NAME}"
+        export BRANCH_NAME_OPT="-Dsonar.branch.name=${BRANCH_NAME}"
         echo "::set-env name=BRANCH_NAME_OPT::${BRANCH_NAME_OPT}"
       
     - name: Sonar

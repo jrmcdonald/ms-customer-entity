@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api project(':customer-entity-core')
 
+    implementation "com.jrmcdonald:ms-common:${commonVersion}"
     implementation "io.micrometer:micrometer-registry-prometheus:${micrometerPrometheusVersion}"
     implementation "net.logstash.logback:logstash-logback-encoder:${logstashEncoderVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

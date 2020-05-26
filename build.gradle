@@ -26,6 +26,13 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url = 'https://maven.pkg.github.com/jrmcdonald/ms-common'
+            credentials {
+                username = "jrmcdonald"
+                password = project.findProperty('GITHUB_TOKEN') ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 
     configurations {
