@@ -1,0 +1,11 @@
+ingress:
+  hosts:
+    - host: kube.local
+      paths: ["/customer-entity"]
+  tls: []
+
+applicationConfig:
+  spring:
+    datasource:
+      url: jdbc:postgresql://ms-customer-entity-postgresql.local.svc.cluster.local:5432/postgres
+      username: customer-entity

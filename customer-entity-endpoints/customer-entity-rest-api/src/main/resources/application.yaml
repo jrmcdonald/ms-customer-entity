@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: ms-customer-entity
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:postgresql://127.0.0.1/postgres
+    username: customer-entity
+    password: customer-entity
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults:  false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://qwyck.eu.auth0.com/.well-known/jwks.json
+
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/changes/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

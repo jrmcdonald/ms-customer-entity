@@ -1,0 +1,15 @@
+plugins {
+    id 'jacoco'
+}
+
+dependencies {
+    api project(':customer-entity-library')
+    api project(':customer-entity-external:customer-entity-postgresql-db')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+}
+
+jar {
+    enabled = true
+}

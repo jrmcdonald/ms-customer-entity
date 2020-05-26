@@ -1,0 +1,18 @@
+plugins {
+    id 'jacoco'
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    implementation project(':customer-entity-endpoints:customer-entity-rest-api')
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatatypeVersion}"
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+    testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
+
+    testImplementation testFixtures(project(":customer-entity-library"))
+}
