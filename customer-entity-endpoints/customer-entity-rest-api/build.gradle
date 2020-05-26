@@ -30,7 +30,7 @@ jar {
 }
 
 bootBuildImage {
-    imageName = "jrmcdonald/${project.name}:${project.version}"
+    imageName = "jrmcdonald/ms-customer-entity:${project.version}"
 }
 
 publishing {

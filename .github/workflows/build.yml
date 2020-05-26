@@ -97,8 +97,9 @@ jobs:
     - name: Docker Release
       if: steps.semantic.outputs.new_release_published == 'true'
       run: |
-        docker login -u jrmcdonald -p ${{ secrets.DOCKER_IO_TOKEN }}
         ./gradlew customer-entity-endpoints:customer-entity-rest-api:bootBuildImage
+        docker login -u jrmcdonald -p ${{ secrets.DOCKER_IO_TOKEN }}
+        docker push
         
     - uses: actions/upload-artifact@v1
       if: always()
