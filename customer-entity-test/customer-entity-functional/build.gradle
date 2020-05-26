@@ -14,5 +14,5 @@ dependencies {
     testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
     testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
 
-    testImplementation testFixtures(project(":customer-entity-library"))
+    testImplementation testFixtures("com.jrmcdonald:ms-common:${commonVersion}")
 }
