@@ -7,6 +7,7 @@ import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.db.model.Customer;
 import com.jrmcdonald.customer.entity.db.repository.CustomerRepository;
 import com.jrmcdonald.ext.containers.PostgresqlContainerFactory;
+import com.jrmcdonald.schema.definition.ServiceHeaders;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -90,6 +91,7 @@ public class CustomerEntitySpringBootTest {
                                                                 .build();
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/customer")
+                                                          .header(ServiceHeaders.CUSTOMER_ID, "user")
                                                           .contentType(APPLICATION_JSON)
                                                           .with(jwt()))
                                          .andExpect(status().isOk())
@@ -106,6 +108,7 @@ public class CustomerEntitySpringBootTest {
         @DisplayName("Should return 404 Not Found for non-existing customer")
         void shouldReturn404NotFoundForNonExistingCustomer() throws Exception {
             mockMvc.perform(get("/v1/customer")
+                                    .header(ServiceHeaders.CUSTOMER_ID, "user")
                                     .contentType(APPLICATION_JSON)
                                     .with(jwt()))
                    .andExpect(status().isNotFound());
