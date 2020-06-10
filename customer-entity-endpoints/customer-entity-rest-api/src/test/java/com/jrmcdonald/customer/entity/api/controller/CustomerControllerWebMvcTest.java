@@ -2,11 +2,12 @@ package com.jrmcdonald.customer.entity.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.jrmcdonald.ext.spring.config.DateTimeConfiguration;
-import com.jrmcdonald.ext.spring.interceptor.config.InterceptorConfiguration;
 import com.jrmcdonald.customer.entity.api.model.CustomerRequest;
 import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.api.service.CustomerService;
+import com.jrmcdonald.ext.spring.config.DateTimeConfiguration;
+import com.jrmcdonald.ext.spring.interceptor.config.InterceptorConfiguration;
+import com.jrmcdonald.schema.definition.ServiceHeaders;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -39,6 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({DateTimeConfiguration.class, InterceptorConfiguration.class})
 @ActiveProfiles("test")
 class CustomerControllerWebMvcTest {
+
+    private static final String CUSTOMER_ID = "customer-id-123";
 
     private static ObjectMapper objectMapper;
 
@@ -75,15 +79,16 @@ class CustomerControllerWebMvcTest {
         @DisplayName("Should return authenticated customer profile")
         void shouldReturnAuthenticatedCustomerProfile() throws Exception {
             CustomerResponse expectedResponse = CustomerResponse.builder()
-                                                                .id("customer-id-123")
+                                                                .id(CUSTOMER_ID)
                                                                 .firstName("first")
                                                                 .lastName("last")
                                                                 .createdAt(Instant.now())
                                                                 .build();
 
-            when(customerService.getCustomer()).thenReturn(expectedResponse);
+            when(customerService.getCustomer(eq(CUSTOMER_ID))).thenReturn(expectedResponse);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/customer")
+                                                          .header(ServiceHeaders.CUSTOMER_ID, CUSTOMER_ID)
                                                           .with(jwt()))
                                          .andExpect(status().isOk())
                                          .andReturn();
@@ -93,7 +98,7 @@ class CustomerControllerWebMvcTest {
 
             assertThat(actualCustomerResponse).isEqualTo(expectedResponse);
 
-            verify(customerService).getCustomer();
+            verify(customerService).getCustomer(eq(CUSTOMER_ID));
         }
     }
 
@@ -112,13 +117,14 @@ class CustomerControllerWebMvcTest {
         @DisplayName("Should return created customer profile")
         void shouldReturnCreatedCustomerProfile() throws Exception {
             CustomerResponse expectedResponse = CustomerResponse.builder()
-                                                                .id("customer-id-123")
+                                                                .id(CUSTOMER_ID)
                                                                 .firstName("first")
                                                                 .lastName("last")
                                                                 .createdAt(Instant.now())
                                                                 .build();
 
             CustomerRequest customerRequest = CustomerRequest.builder()
+                                                             .id(CUSTOMER_ID)
                                                              .firstName("first")
                                                              .lastName("last")
                                                              .build();

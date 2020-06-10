@@ -1,14 +1,13 @@
 package com.jrmcdonald.customer.entity.api.service;
 
-import com.jrmcdonald.customer.entity.db.model.Customer;
-import com.jrmcdonald.customer.entity.db.service.CustomerPersistenceService;
 import com.jrmcdonald.customer.entity.api.mapper.CustomerRequestMapper;
 import com.jrmcdonald.customer.entity.api.mapper.CustomerResponseMapper;
 import com.jrmcdonald.customer.entity.api.model.CustomerRequest;
 import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
+import com.jrmcdonald.customer.entity.db.model.Customer;
+import com.jrmcdonald.customer.entity.db.service.CustomerPersistenceService;
 import com.jrmcdonald.ext.spring.exception.ConflictException;
 import com.jrmcdonald.ext.spring.exception.NotFoundException;
-import com.jrmcdonald.ext.spring.security.AuthenticationFacade;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,9 +30,6 @@ import static org.mockito.Mockito.when;
 class CustomerServiceTest {
 
     @Mock
-    private AuthenticationFacade authenticationFacade;
-
-    @Mock
     private CustomerResponseMapper customerResponseMapper;
 
     @Mock
@@ -46,7 +42,7 @@ class CustomerServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        customerService = new CustomerService(authenticationFacade, customerPersistenceService, customerRequestMapper, customerResponseMapper);
+        customerService = new CustomerService(customerPersistenceService, customerRequestMapper, customerResponseMapper);
     }
 
     @AfterEach
@@ -71,11 +67,10 @@ class CustomerServiceTest {
                                                                     .createdAt(customer.getCreatedAt())
                                                                     .build();
 
-        when(authenticationFacade.getCustomerId()).thenReturn("customer-id-123");
         when(customerPersistenceService.findById(eq("customer-id-123"))).thenReturn(Optional.of(customer));
         when(customerResponseMapper.apply(eq(customer))).thenReturn(expectedCustomerResponse);
 
-        CustomerResponse actualCustomerResponse = customerService.getCustomer();
+        CustomerResponse actualCustomerResponse = customerService.getCustomer("customer-id-123");
 
         assertThat(actualCustomerResponse).isEqualTo(expectedCustomerResponse);
     }
@@ -83,16 +78,16 @@ class CustomerServiceTest {
     @Test
     @DisplayName("Should throw CustomerNotFoundException when the customer does not exist")
     void shouldThrowCustomerNotFoundExceptionWhenTheCustomerDoesNotExist() {
-        when(authenticationFacade.getCustomerId()).thenReturn("customer-id-123");
         when(customerPersistenceService.findById(eq("customer-id-123"))).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> customerService.getCustomer());
+        assertThrows(NotFoundException.class, () -> customerService.getCustomer("customer-id-123"));
     }
 
     @Test
     @DisplayName("Should create a customer profile")
     void wshouldCreateACustomerProfile() {
         CustomerRequest customerRequest = CustomerRequest.builder()
+                                                         .id("customer-id-123")
                                                          .firstName("first")
                                                          .lastName("last")
                                                          .build();
@@ -117,7 +112,6 @@ class CustomerServiceTest {
                                                                     .createdAt(savedCustomer.getCreatedAt())
                                                                     .build();
 
-        when(authenticationFacade.getCustomerId()).thenReturn("customer-id-123");
         when(customerPersistenceService.findById("customer-id-123")).thenReturn(Optional.empty());
         when(customerRequestMapper.apply(eq("customer-id-123"), eq(customerRequest))).thenReturn(customer);
         when(customerPersistenceService.create(eq(customer))).thenReturn(savedCustomer);
@@ -132,6 +126,7 @@ class CustomerServiceTest {
     @DisplayName("Should throw CustomerAlreadyExistsException when the customer already exists")
     void shouldThrowCustomerAlreadyExistsExceptionWhenTheCustomerAlreadyExists() {
         CustomerRequest customerRequest = CustomerRequest.builder()
+                                                         .id("customer-id-123")
                                                          .firstName("first")
                                                          .lastName("last")
                                                          .build();
@@ -142,7 +137,6 @@ class CustomerServiceTest {
                                     .lastName(customerRequest.getLastName())
                                     .build();
 
-        when(authenticationFacade.getCustomerId()).thenReturn("customer-id-123");
         when(customerPersistenceService.findById("customer-id-123")).thenReturn(Optional.of(customer));
 
         assertThrows(ConflictException.class, () -> customerService.createCustomer(customerRequest));
