@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
 
+    private static final String CUSTOMER_ID_VALUE = "customer-id-123";
     @Mock
     private CustomerResponseMapper customerResponseMapper;
 
@@ -54,7 +55,7 @@ class CustomerServiceTest {
     @DisplayName("Should find the customer")
     void shouldFindTheCustomer() {
         Customer customer = Customer.builder()
-                                    .id("customer-id-123")
+                                    .id(CUSTOMER_ID_VALUE)
                                     .firstName("first")
                                     .lastName("last")
                                     .createdAt(Instant.now())
@@ -67,10 +68,10 @@ class CustomerServiceTest {
                                                                     .createdAt(customer.getCreatedAt())
                                                                     .build();
 
-        when(customerPersistenceService.findById(eq("customer-id-123"))).thenReturn(Optional.of(customer));
+        when(customerPersistenceService.findById(eq(CUSTOMER_ID_VALUE))).thenReturn(Optional.of(customer));
         when(customerResponseMapper.apply(eq(customer))).thenReturn(expectedCustomerResponse);
 
-        CustomerResponse actualCustomerResponse = customerService.getCustomer("customer-id-123");
+        CustomerResponse actualCustomerResponse = customerService.getCustomer(CUSTOMER_ID_VALUE);
 
         assertThat(actualCustomerResponse).isEqualTo(expectedCustomerResponse);
     }
@@ -78,32 +79,31 @@ class CustomerServiceTest {
     @Test
     @DisplayName("Should throw CustomerNotFoundException when the customer does not exist")
     void shouldThrowCustomerNotFoundExceptionWhenTheCustomerDoesNotExist() {
-        when(customerPersistenceService.findById(eq("customer-id-123"))).thenReturn(Optional.empty());
+        when(customerPersistenceService.findById(eq(CUSTOMER_ID_VALUE))).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> customerService.getCustomer("customer-id-123"));
+        assertThrows(NotFoundException.class, () -> customerService.getCustomer(CUSTOMER_ID_VALUE));
     }
 
     @Test
     @DisplayName("Should create a customer profile")
     void wshouldCreateACustomerProfile() {
         CustomerRequest customerRequest = CustomerRequest.builder()
-                                                         .id("customer-id-123")
                                                          .firstName("first")
                                                          .lastName("last")
                                                          .build();
 
         Customer customer = Customer.builder()
-                                    .id("customer-id-123")
+                                    .id(CUSTOMER_ID_VALUE)
                                     .firstName(customerRequest.getFirstName())
                                     .lastName(customerRequest.getLastName())
                                     .build();
 
         Customer savedCustomer = Customer.builder()
-                                            .id("customer-id-123")
-                                            .firstName(customerRequest.getFirstName())
-                                            .lastName(customerRequest.getLastName())
-                                            .createdAt(Instant.now())
-                                            .build();
+                                         .id(CUSTOMER_ID_VALUE)
+                                         .firstName(customerRequest.getFirstName())
+                                         .lastName(customerRequest.getLastName())
+                                         .createdAt(Instant.now())
+                                         .build();
 
         CustomerResponse expectedCustomerResponse = CustomerResponse.builder()
                                                                     .id(savedCustomer.getId())
@@ -112,12 +112,12 @@ class CustomerServiceTest {
                                                                     .createdAt(savedCustomer.getCreatedAt())
                                                                     .build();
 
-        when(customerPersistenceService.findById("customer-id-123")).thenReturn(Optional.empty());
-        when(customerRequestMapper.apply(eq("customer-id-123"), eq(customerRequest))).thenReturn(customer);
+        when(customerPersistenceService.findById(CUSTOMER_ID_VALUE)).thenReturn(Optional.empty());
+        when(customerRequestMapper.apply(eq(CUSTOMER_ID_VALUE), eq(customerRequest))).thenReturn(customer);
         when(customerPersistenceService.create(eq(customer))).thenReturn(savedCustomer);
         when(customerResponseMapper.apply(eq(savedCustomer))).thenReturn(expectedCustomerResponse);
 
-        CustomerResponse actualCustomerResponse = customerService.createCustomer(customerRequest);
+        CustomerResponse actualCustomerResponse = customerService.createCustomer(CUSTOMER_ID_VALUE, customerRequest);
 
         assertThat(actualCustomerResponse).isEqualTo(expectedCustomerResponse);
     }
@@ -126,19 +126,18 @@ class CustomerServiceTest {
     @DisplayName("Should throw CustomerAlreadyExistsException when the customer already exists")
     void shouldThrowCustomerAlreadyExistsExceptionWhenTheCustomerAlreadyExists() {
         CustomerRequest customerRequest = CustomerRequest.builder()
-                                                         .id("customer-id-123")
                                                          .firstName("first")
                                                          .lastName("last")
                                                          .build();
 
         Customer customer = Customer.builder()
-                                    .id("customer-id-123")
+                                    .id(CUSTOMER_ID_VALUE)
                                     .firstName(customerRequest.getFirstName())
                                     .lastName(customerRequest.getLastName())
                                     .build();
 
-        when(customerPersistenceService.findById("customer-id-123")).thenReturn(Optional.of(customer));
+        when(customerPersistenceService.findById(CUSTOMER_ID_VALUE)).thenReturn(Optional.of(customer));
 
-        assertThrows(ConflictException.class, () -> customerService.createCustomer(customerRequest));
+        assertThrows(ConflictException.class, () -> customerService.createCustomer(CUSTOMER_ID_VALUE, customerRequest));
     }
 }

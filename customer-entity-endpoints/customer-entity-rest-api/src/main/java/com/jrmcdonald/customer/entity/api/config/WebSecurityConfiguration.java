@@ -1,14 +1,11 @@
 package com.jrmcdonald.customer.entity.api.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,13 +17,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
-            .antMatchers("/**").authenticated()
+            .antMatchers(HttpMethod.GET, "/v1/customer/**").hasAuthority("SCOPE_read:customer")
+            .antMatchers(HttpMethod.POST, "/v1/customer/**").hasAuthority("SCOPE_create:customer")
+            .antMatchers("/**").denyAll()
             .and()
+            .csrf().disable()
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri) {
-        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
     }
 }

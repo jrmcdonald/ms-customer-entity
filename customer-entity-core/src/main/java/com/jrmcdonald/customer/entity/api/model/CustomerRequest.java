@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public class CustomerRequest {
 
-    private final @NotNull String id;
     private final @NotNull String firstName;
     private final @NotNull String lastName;
 }

@@ -26,9 +26,7 @@ public class CustomerService {
                                          .orElseThrow(NotFoundException::new);
     }
 
-    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
-        String customerId = customerRequest.getId();
-
+    public CustomerResponse createCustomer(String customerId, CustomerRequest customerRequest) {
         if (customerPersistenceService.findById(customerId).isPresent()) {
             throw new ConflictException();
         }
