@@ -7,7 +7,7 @@ import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.api.service.CustomerService;
 import com.jrmcdonald.ext.spring.config.DateTimeConfiguration;
 import com.jrmcdonald.ext.spring.interceptor.config.InterceptorConfiguration;
-import com.jrmcdonald.schema.definition.ServiceHeaders;
+import com.jrmcdonald.ext.spring.security.oauth2.config.JwtDecoderConfiguration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +19,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.Instant;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -38,11 +41,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CustomerController.class)
-@Import({DateTimeConfiguration.class, InterceptorConfiguration.class})
+@Import({DateTimeConfiguration.class, InterceptorConfiguration.class, JwtDecoderConfiguration.class})
 @ActiveProfiles("test")
 class CustomerControllerWebMvcTest {
 
-    private static final String CUSTOMER_ID = "customer-id-123";
+    private static final String CUSTOMER_URI_PATTERN = "/v1/customer/%s";
+    private static final String CUSTOMER_ID_VALUE = "customer-id-123";
+
+    private static final GrantedAuthority READ_CUSTOMER_AUTHORITY = new SimpleGrantedAuthority("SCOPE_read:customer");
+    private static final GrantedAuthority CREATE_CUSTOMER_AUTHORITY = new SimpleGrantedAuthority("SCOPE_create:customer");
 
     private static ObjectMapper objectMapper;
 
@@ -70,26 +77,31 @@ class CustomerControllerWebMvcTest {
         @WithAnonymousUser
         @DisplayName("Should reject anonymous user")
         void shouldRejectAnonymousUser() throws Exception {
-            mockMvc.perform(get("/v1/customer"))
+            mockMvc.perform(get(format(CUSTOMER_URI_PATTERN, CUSTOMER_ID_VALUE)))
                    .andExpect(status().isUnauthorized());
-
         }
 
         @Test
-        @DisplayName("Should return authenticated customer profile")
-        void shouldReturnAuthenticatedCustomerProfile() throws Exception {
+        @DisplayName("Should reject user without appropriate permission")
+        void shouldRejectUserWithoutAppropriatePermission() throws Exception {
+            mockMvc.perform(get(format(CUSTOMER_URI_PATTERN, CUSTOMER_ID_VALUE)).with(jwt()))
+                   .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("Should return customer profile")
+        void shouldReturnCustomerProfile() throws Exception {
             CustomerResponse expectedResponse = CustomerResponse.builder()
-                                                                .id(CUSTOMER_ID)
+                                                                .id(CUSTOMER_ID_VALUE)
                                                                 .firstName("first")
                                                                 .lastName("last")
                                                                 .createdAt(Instant.now())
                                                                 .build();
 
-            when(customerService.getCustomer(eq(CUSTOMER_ID))).thenReturn(expectedResponse);
+            when(customerService.getCustomer(eq(CUSTOMER_ID_VALUE))).thenReturn(expectedResponse);
 
-            MvcResult mvcResult = mockMvc.perform(get("/v1/customer")
-                                                          .header(ServiceHeaders.CUSTOMER_ID, CUSTOMER_ID)
-                                                          .with(jwt()))
+            MvcResult mvcResult = mockMvc.perform(get(format(CUSTOMER_URI_PATTERN, CUSTOMER_ID_VALUE))
+                                                          .with(jwt().authorities(READ_CUSTOMER_AUTHORITY)))
                                          .andExpect(status().isOk())
                                          .andReturn();
 
@@ -98,7 +110,7 @@ class CustomerControllerWebMvcTest {
 
             assertThat(actualCustomerResponse).isEqualTo(expectedResponse);
 
-            verify(customerService).getCustomer(eq(CUSTOMER_ID));
+            verify(customerService).getCustomer(eq(CUSTOMER_ID_VALUE));
         }
     }
 
@@ -109,34 +121,40 @@ class CustomerControllerWebMvcTest {
         @WithAnonymousUser
         @DisplayName("Should reject anonymous user")
         void shouldRejectAnonymousUser() throws Exception {
-            mockMvc.perform(get("/v1/customer"))
+            mockMvc.perform(post(format(CUSTOMER_URI_PATTERN, CUSTOMER_ID_VALUE)))
                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @DisplayName("Should reject user without appropriate permission")
+        void shouldRejectUserWithoutAppropriatePermission() throws Exception {
+            mockMvc.perform(post(format(CUSTOMER_URI_PATTERN, CUSTOMER_ID_VALUE)).with(jwt()))
+                   .andExpect(status().isForbidden());
         }
 
         @Test
         @DisplayName("Should return created customer profile")
         void shouldReturnCreatedCustomerProfile() throws Exception {
             CustomerResponse expectedResponse = CustomerResponse.builder()
-                                                                .id(CUSTOMER_ID)
+                                                                .id(CUSTOMER_ID_VALUE)
                                                                 .firstName("first")
                                                                 .lastName("last")
                                                                 .createdAt(Instant.now())
                                                                 .build();
 
             CustomerRequest customerRequest = CustomerRequest.builder()
-                                                             .id(CUSTOMER_ID)
                                                              .firstName("first")
                                                              .lastName("last")
                                                              .build();
 
-            when(customerService.createCustomer(refEq(customerRequest))).thenReturn(expectedResponse);
+            when(customerService.createCustomer(eq(CUSTOMER_ID_VALUE), refEq(customerRequest))).thenReturn(expectedResponse);
 
             String customerRequestAsJson = objectMapper.writeValueAsString(customerRequest);
 
-            MvcResult mvcResult = mockMvc.perform(post("/v1/customer")
+            MvcResult mvcResult = mockMvc.perform(post(format(CUSTOMER_URI_PATTERN, CUSTOMER_ID_VALUE))
                                                           .content(customerRequestAsJson)
                                                           .contentType(MediaType.APPLICATION_JSON)
-                                                          .with(jwt()))
+                                                          .with(jwt().authorities(CREATE_CUSTOMER_AUTHORITY)))
                                          .andExpect(status().isCreated())
                                          .andReturn();
 
@@ -145,7 +163,7 @@ class CustomerControllerWebMvcTest {
 
             assertThat(actualCustomerResponse).isEqualTo(expectedResponse);
 
-            verify(customerService).createCustomer(refEq(customerRequest));
+            verify(customerService).createCustomer(eq(CUSTOMER_ID_VALUE), refEq(customerRequest));
         }
     }
 

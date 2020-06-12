@@ -10,7 +10,7 @@ class CustomerRequestTest {
     @DisplayName("Should construct a valid bean")
     void shouldConstructAValidBean() {
         BeanTester beanTester = new BeanTester();
-        beanTester.testBean(CustomerRequest.class, new Object[]{"customer-id-123", "first", "last"});
+        beanTester.testBean(CustomerRequest.class, new Object[]{"first", "last"});
     }
 
 }
