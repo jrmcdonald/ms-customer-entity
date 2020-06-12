@@ -18,11 +18,6 @@ spring:
       hibernate:
         temp:
           use_jdbc_metadata_defaults:  false
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: https://qwyck.eu.auth0.com/.well-known/jwks.json
 
 databaseChangeLog:
   - includeAll:

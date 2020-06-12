@@ -5,12 +5,15 @@ import com.jrmcdonald.ext.spring.exception.config.ExceptionHandlerConfiguration;
 import com.jrmcdonald.ext.spring.interceptor.config.InterceptorConfiguration;
 import com.jrmcdonald.ext.spring.interceptor.config.WebMvcInterceptorConfiguration;
 import com.jrmcdonald.ext.spring.security.config.SecurityConfiguration;
+import com.jrmcdonald.ext.spring.security.oauth2.config.JwtDecoderConfiguration;
+
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import javax.annotation.PostConstruct;
 import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 @ComponentScan(basePackages = "com.jrmcdonald.customer.entity")
@@ -18,6 +21,7 @@ import java.util.TimeZone;
         DateTimeConfiguration.class,
         ExceptionHandlerConfiguration.class,
         InterceptorConfiguration.class,
+        JwtDecoderConfiguration.class,
         SecurityConfiguration.class,
         WebMvcInterceptorConfiguration.class
 })
