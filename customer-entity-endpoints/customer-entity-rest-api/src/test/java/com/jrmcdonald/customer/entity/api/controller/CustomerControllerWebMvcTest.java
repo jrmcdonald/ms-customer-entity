@@ -2,12 +2,13 @@ package com.jrmcdonald.customer.entity.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jrmcdonald.common.ext.spring.core.oauth2.config.JwtValidatorConfiguration;
+import com.jrmcdonald.common.ext.spring.datetime.config.DateTimeConfiguration;
+import com.jrmcdonald.common.ext.spring.web.interceptor.config.InterceptorConfiguration;
+import com.jrmcdonald.common.ext.spring.web.oauth2.jwt.config.JwtDecoderConfiguration;
 import com.jrmcdonald.customer.entity.api.model.CustomerRequest;
 import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.api.service.CustomerService;
-import com.jrmcdonald.ext.spring.config.DateTimeConfiguration;
-import com.jrmcdonald.ext.spring.interceptor.config.InterceptorConfiguration;
-import com.jrmcdonald.ext.spring.security.oauth2.config.JwtDecoderConfiguration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CustomerController.class)
-@Import({DateTimeConfiguration.class, InterceptorConfiguration.class, JwtDecoderConfiguration.class})
+@Import({DateTimeConfiguration.class, InterceptorConfiguration.class, JwtValidatorConfiguration.class, JwtDecoderConfiguration.class})
 @ActiveProfiles("test")
 class CustomerControllerWebMvcTest {
 

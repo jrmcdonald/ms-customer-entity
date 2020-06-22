@@ -2,11 +2,11 @@ package com.jrmcdonald.customer.entity.api.functional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jrmcdonald.common.test.container.factory.PostgresqlContainerFactory;
 import com.jrmcdonald.customer.entity.api.Application;
 import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.db.model.Customer;
 import com.jrmcdonald.customer.entity.db.repository.CustomerRepository;
-import com.jrmcdonald.ext.containers.PostgresqlContainerFactory;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

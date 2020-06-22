@@ -1,8 +1,8 @@
 package com.jrmcdonald.customer.entity.db.repository;
 
+import com.jrmcdonald.common.test.container.factory.PostgresqlContainerFactory;
 import com.jrmcdonald.customer.entity.db.config.DatabaseConfiguration;
 import com.jrmcdonald.customer.entity.db.model.Customer;
-import com.jrmcdonald.ext.containers.PostgresqlContainerFactory;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

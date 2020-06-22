@@ -1,13 +1,13 @@
 package com.jrmcdonald.customer.entity.api.service;
 
+import com.jrmcdonald.common.schema.definition.exception.ConflictException;
+import com.jrmcdonald.common.schema.definition.exception.NotFoundException;
 import com.jrmcdonald.customer.entity.api.mapper.CustomerRequestMapper;
 import com.jrmcdonald.customer.entity.api.mapper.CustomerResponseMapper;
 import com.jrmcdonald.customer.entity.api.model.CustomerRequest;
 import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.db.model.Customer;
 import com.jrmcdonald.customer.entity.db.service.CustomerPersistenceService;
-import com.jrmcdonald.ext.spring.exception.ConflictException;
-import com.jrmcdonald.ext.spring.exception.NotFoundException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
