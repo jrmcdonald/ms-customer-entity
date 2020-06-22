@@ -6,9 +6,16 @@ plugins {
 dependencies {
     api project(':customer-entity-core')
 
-    implementation "com.jrmcdonald:ms-common:${commonVersion}"
-    implementation "io.micrometer:micrometer-registry-prometheus:${micrometerPrometheusVersion}"
-    implementation "net.logstash.logback:logstash-logback-encoder:${logstashEncoderVersion}"
+
+    implementation 'com.jrmcdonald:ms-common-ext-spring-core-oauth2'
+    implementation 'com.jrmcdonald:ms-common-ext-spring-datetime'
+    implementation 'com.jrmcdonald:ms-common-ext-spring-web-exception'
+    implementation 'com.jrmcdonald:ms-common-ext-spring-web-interceptor'
+    implementation 'com.jrmcdonald:ms-common-ext-spring-web-oauth2'
+    implementation 'com.jrmcdonald:ms-common-ext-spring-web-security'
+
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'net.logstash.logback:logstash-logback-encoder'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -18,7 +25,7 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     implementation 'org.springframework.security:spring-security-config'
 
-    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatatypeVersion}"
+    testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     testImplementation 'org.springframework.security:spring-security-test'
 }
 

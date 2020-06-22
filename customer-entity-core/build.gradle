@@ -5,9 +5,11 @@ plugins {
 dependencies {
     api project(':customer-entity-external:customer-entity-postgresql-db')
 
-    implementation "com.jrmcdonald:ms-common:${commonVersion}"
+    implementation 'com.jrmcdonald:ms-common-schema-definition'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    testImplementation 'com.jrmcdonald:ms-common-schema-definition'
 }
 
 jar {

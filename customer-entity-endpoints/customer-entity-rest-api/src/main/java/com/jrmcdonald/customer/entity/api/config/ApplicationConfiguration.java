@@ -1,11 +1,12 @@
 package com.jrmcdonald.customer.entity.api.config;
 
-import com.jrmcdonald.ext.spring.config.DateTimeConfiguration;
-import com.jrmcdonald.ext.spring.exception.config.ExceptionHandlerConfiguration;
-import com.jrmcdonald.ext.spring.interceptor.config.InterceptorConfiguration;
-import com.jrmcdonald.ext.spring.interceptor.config.WebMvcInterceptorConfiguration;
-import com.jrmcdonald.ext.spring.security.config.SecurityConfiguration;
-import com.jrmcdonald.ext.spring.security.oauth2.config.JwtDecoderConfiguration;
+import com.jrmcdonald.common.ext.spring.core.oauth2.config.JwtValidatorConfiguration;
+import com.jrmcdonald.common.ext.spring.datetime.config.DateTimeConfiguration;
+import com.jrmcdonald.common.ext.spring.web.exception.handler.config.ExceptionHandlerConfiguration;
+import com.jrmcdonald.common.ext.spring.web.interceptor.config.InterceptorConfiguration;
+import com.jrmcdonald.common.ext.spring.web.interceptor.config.WebMvcInterceptorConfiguration;
+import com.jrmcdonald.common.ext.spring.web.oauth2.jwt.config.JwtDecoderConfiguration;
+import com.jrmcdonald.common.ext.spring.web.security.authentication.config.SecurityConfiguration;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import javax.annotation.PostConstruct;
         ExceptionHandlerConfiguration.class,
         InterceptorConfiguration.class,
         JwtDecoderConfiguration.class,
+        JwtValidatorConfiguration.class,
         SecurityConfiguration.class,
         WebMvcInterceptorConfiguration.class
 })
