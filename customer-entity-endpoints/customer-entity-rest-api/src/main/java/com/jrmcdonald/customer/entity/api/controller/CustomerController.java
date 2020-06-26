@@ -1,5 +1,6 @@
 package com.jrmcdonald.customer.entity.api.controller;
 
+import com.jrmcdonald.customer.entity.api.doc.CustomerApi;
 import com.jrmcdonald.customer.entity.api.model.CustomerRequest;
 import com.jrmcdonald.customer.entity.api.model.CustomerResponse;
 import com.jrmcdonald.customer.entity.api.service.CustomerService;
@@ -21,16 +22,18 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/customer/{id}")
-public class CustomerController {
+public class CustomerController implements CustomerApi {
 
     private final CustomerService customerService;
 
+    @Override
     @Timed
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerResponse> getCustomer(@PathVariable("id") String customerId) {
         return ResponseEntity.ok(customerService.getCustomer(customerId));
     }
 
+    @Override
     @Timed
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerResponse> createCustomer(@PathVariable("id") String customerId, @RequestBody CustomerRequest customerRequest) {
