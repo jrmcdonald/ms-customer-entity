@@ -19,6 +19,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
             .antMatchers(HttpMethod.GET, "/v1/customer/**").hasAuthority("SCOPE_read:customer")
             .antMatchers(HttpMethod.POST, "/v1/customer/**").hasAuthority("SCOPE_create:customer")
+            .antMatchers("/v3/api-docs/**", "/webjars/swagger-ui/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .antMatchers("/**").denyAll()
             .and()
             .csrf().disable()

@@ -28,3 +28,14 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
+
+openapi:
+  title: Customer Entity
+  description: Customer Entity API
+  version: 1.0.0
+  security:
+    scheme: client-credentials
+    authorization-url: https://qwyck.eu.auth0.com/oauth/auth
+    refresh-url: https://qwyck.eu.auth0.com/oauth/token
+    token-url: https://qwyck.eu.auth0.com/oauth/token
+    scopes: CUSTOMER_READ,CUSTOMER_WRITE

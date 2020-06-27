@@ -1,6 +1,7 @@
 package com.jrmcdonald.customer.entity.api.config;
 
 import com.jrmcdonald.common.ext.spring.core.oauth2.config.JwtValidatorConfiguration;
+import com.jrmcdonald.common.ext.spring.core.openapi.config.OpenApiConfiguration;
 import com.jrmcdonald.common.ext.spring.datetime.config.DateTimeConfiguration;
 import com.jrmcdonald.common.ext.spring.web.exception.handler.config.ExceptionHandlerConfiguration;
 import com.jrmcdonald.common.ext.spring.web.interceptor.config.InterceptorConfiguration;
@@ -24,6 +25,7 @@ import javax.annotation.PostConstruct;
         InterceptorConfiguration.class,
         JwtDecoderConfiguration.class,
         JwtValidatorConfiguration.class,
+        OpenApiConfiguration.class,
         SecurityConfiguration.class,
         WebMvcInterceptorConfiguration.class
 })
