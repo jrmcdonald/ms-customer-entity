@@ -8,9 +8,6 @@ spring:
   main:
     banner-mode: off
   datasource:
-    url: jdbc:postgresql://127.0.0.1/postgres
-    username: customer-entity
-    password: customer-entity
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
@@ -22,12 +19,6 @@ spring:
 databaseChangeLog:
   - includeAll:
       path: db/changelog/changes/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
 
 openapi:
   title: Customer Entity
