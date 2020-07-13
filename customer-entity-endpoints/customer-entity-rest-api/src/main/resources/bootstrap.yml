@@ -1,6 +1,10 @@
 spring:
   application:
     name: ms-customer-entity
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
 
 ---
 spring:

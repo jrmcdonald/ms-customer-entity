@@ -1,10 +1,4 @@
 spring:
-  application:
-    name: ms-customer-entity
-  cloud:
-    kubernetes:
-      reload:
-        enabled: true
   main:
     banner-mode: off
   datasource:
@@ -20,13 +14,24 @@ databaseChangeLog:
   - includeAll:
       path: db/changelog/changes/
 
+---
+spring:
+  profiles: local,unit-test,functional-test
+  datasource:
+    url: jdbc:postgresql://127.0.0.1/postgres
+    username: customer-entity
+    password: customer-entity
+
 openapi:
   title: Customer Entity
   description: Customer Entity API
   version: 1.0.0
   security:
     scheme: client-credentials
-    authorization-url: https://qwyck.eu.auth0.com/oauth/auth
-    refresh-url: https://qwyck.eu.auth0.com/oauth/token
-    token-url: https://qwyck.eu.auth0.com/oauth/token
+    authorization-url: https://localhost:8081/oauth/auth
+    refresh-url: https://localhost:8081/oauth/token
+    token-url: https://localhost:8081/oauth/token
     scopes: CUSTOMER_READ,CUSTOMER_WRITE
+  servers:
+    - url: http://localhost:8080
+      description: Customer-Entity internal service
