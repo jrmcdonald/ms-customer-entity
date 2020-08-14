@@ -1,7 +1,3 @@
-plugins {
-    id 'jacoco'
-}
-
 dependencies {
     api project(':customer-entity-external:customer-entity-postgresql-db')
 

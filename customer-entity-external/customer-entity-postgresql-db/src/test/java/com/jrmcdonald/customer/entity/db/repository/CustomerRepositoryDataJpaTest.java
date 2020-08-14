@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CustomerRepositoryDataJpaTest {
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final PostgreSQLContainer postgreSQLContainer = PostgresqlContainerFactory.getInstance();
 
     @Autowired
