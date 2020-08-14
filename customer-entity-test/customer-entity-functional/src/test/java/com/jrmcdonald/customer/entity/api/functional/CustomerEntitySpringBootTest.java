@@ -51,6 +51,7 @@ public class CustomerEntitySpringBootTest {
     private static final GrantedAuthority CREATE_CUSTOMER_AUTHORITY = new SimpleGrantedAuthority("SCOPE_create:customer");
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final PostgreSQLContainer postgreSQLContainer = PostgresqlContainerFactory.getInstance();
 
     private static ObjectMapper objectMapper;

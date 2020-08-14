@@ -1,25 +1,15 @@
 plugins {
-    id 'com.github.ben-manes.versions' version "${versionsPluginVersion}"
-    id 'com.github.spotbugs' version "${spotbugsPluginVersion}"
-    id 'com.gtramontina.ghooks.gradle' version "${ghooksPluginVersion}"
-    id 'org.owasp.dependencycheck' version "${dependencyCheckPluginVersion}"
-    id 'org.sonarqube' version "${sonarqubePluginVersion}"
-    id 'org.springframework.boot' version "${springBootPluginVersion}"
-    id 'jacoco'
     id 'java'
-    id 'java-library'
+    id 'com.jrmcdonald.ms-gradle-baseline' version "${gradleBaselinePluginVerson}"
 }
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
-    apply plugin: 'com.github.ben-manes.versions'
-    apply plugin: 'com.github.spotbugs'
-    apply plugin: 'org.owasp.dependencycheck'
-    apply plugin: 'org.springframework.boot'
 
     group = 'com.jrmcdonald'
     version = "${version}"
+
     sourceCompatibility = '11'
     targetCompatibility = '11'
 
@@ -35,15 +25,6 @@ allprojects {
     }
 
     configurations {
-        commonBom
-        compileOnly.extendsFrom(commonBom)
-        annotationProcessor.extendsFrom(commonBom)
-        testCompileOnly.extendsFrom(commonBom)
-        testAnnotationProcessor.extendsFrom(commonBom)
-        implementation.extendsFrom(commonBom)
-        testImplementation.extendsFrom(commonBom)
-        testFixturesImplementation.extendsFrom(commonBom)
-
         [apiElements, runtimeElements].each {
             it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
             it.outgoing.artifact(bootJar)
@@ -51,7 +32,7 @@ allprojects {
     }
 
     dependencies {
-        commonBom platform("com.jrmcdonald:ms-common-bom:${commonVersion}")
+        commonPlatform platform("com.jrmcdonald:ms-common-bom:${commonVersion}")
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
 
@@ -65,22 +46,4 @@ allprojects {
             exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
         }
     }
-
-    compileJava {
-        options.compilerArgs << "-Werror"
-        options.compilerArgs << "-Xlint:all"
-        options.compilerArgs << "-Xlint:-try"
-        options.compilerArgs << "-Xlint:-processing"
-    }
-
-    bootJar {
-        enabled = false
-    }
-
-    test {
-        useJUnitPlatform()
-    }
 }
-
-apply from: "${rootDir}/gradle/dependencies.gradle"
-apply from: "${rootDir}/gradle/quality.gradle"
